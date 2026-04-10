@@ -1,4 +1,4 @@
-FROM golang:1.18 as builder
+FROM --platform=linux/amd64 golang:1.26 AS builder
 
 COPY . /webboot
 WORKDIR /webboot/mayhem
@@ -6,7 +6,7 @@ WORKDIR /webboot/mayhem
 RUN go install github.com/dvyukov/go-fuzz/go-fuzz@latest github.com/dvyukov/go-fuzz/go-fuzz-build@latest
 RUN go get github.com/dvyukov/go-fuzz/go-fuzz-dep
 RUN go get github.com/AdaLogics/go-fuzz-headers
-RUN apt update && apt install -y clang
+RUN apt-get update && apt-get install -y clang
 
 RUN go-fuzz-build -libfuzzer -o fuzzWebboot.a && \
     clang -fsanitize=fuzzer fuzzWebboot.a -o fuzzWebboot.libfuzzer
